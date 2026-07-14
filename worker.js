@@ -1,3 +1,5 @@
+const VAULT_GUIDE_TAG_ID = 21185241;
+
 function json(data, status) {
   return new Response(JSON.stringify(data), {
     status: status,
@@ -29,6 +31,19 @@ async function handleSubscribe(request, env) {
 
   if (!kitRes.ok) {
     return json({ error: 'Subscription failed' }, 502);
+  }
+
+  const tagRes = await fetch(`https://api.kit.com/v4/tags/${VAULT_GUIDE_TAG_ID}/subscribers`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Kit-Api-Key': env.KIT_API_KEY
+    },
+    body: JSON.stringify({ email_address: email })
+  });
+
+  if (!tagRes.ok) {
+    return json({ error: 'Tagging failed' }, 502);
   }
 
   return json({ success: true }, 200);
