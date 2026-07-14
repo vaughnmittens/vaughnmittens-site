@@ -28,8 +28,7 @@ async function handleSubscribe(request, env) {
   });
 
   if (!kitRes.ok) {
-    const detail = await kitRes.text();
-    return json({ error: 'Subscription failed', kitStatus: kitRes.status, kitBody: detail, keyPresent: !!env.KIT_API_KEY, keyPreview: env.KIT_API_KEY ? env.KIT_API_KEY.slice(0, 6) : null }, 502);
+    return json({ error: 'Subscription failed' }, 502);
   }
 
   return json({ success: true }, 200);
