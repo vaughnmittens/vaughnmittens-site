@@ -7,7 +7,7 @@ function json(data, status) {
   });
 }
 
-export async function onRequestPost({ request, env }) {
+async function handleSubscribe(request, env) {
   let email;
   try {
     const body = await request.json();
@@ -35,3 +35,15 @@ export async function onRequestPost({ request, env }) {
 
   return json({ success: true }, 200);
 }
+
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+
+    if (request.method === 'POST' && url.pathname === '/subscribe') {
+      return handleSubscribe(request, env);
+    }
+
+    return env.ASSETS.fetch(request);
+  }
+};

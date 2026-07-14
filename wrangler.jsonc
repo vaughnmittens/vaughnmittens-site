@@ -1,0 +1,11 @@
+{
+  "name": "vaughnmittens-site",
+  "main": "worker.js",
+  "compatibility_date": "2026-07-14",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./",
+    "binding": "ASSETS",
+    "run_worker_first": ["/subscribe"]
+  }
+}
