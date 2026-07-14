@@ -1,5 +1,3 @@
-const KIT_FORM_ID = 9683215;
-
 function json(data, status) {
   return new Response(JSON.stringify(data), {
     status: status,
@@ -20,7 +18,7 @@ async function handleSubscribe(request, env) {
     return json({ error: 'A valid email is required' }, 400);
   }
 
-  const kitRes = await fetch(`https://api.kit.com/v4/forms/${KIT_FORM_ID}/subscribers`, {
+  const kitRes = await fetch('https://api.kit.com/v4/subscribers', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
