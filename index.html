@@ -81,6 +81,8 @@
   .capture h3{font-family:var(--display);font-size:24px;margin:8px 0 10px}
   .capture input{width:100%;font-family:var(--body);font-size:16px;padding:13px;border:3px solid var(--ink);border-radius:10px;margin-bottom:10px}
   .capture button{width:100%;font-family:var(--display);font-size:18px;padding:13px;border:3px solid var(--ink);border-radius:10px;background:var(--ink);color:var(--sun);cursor:pointer}
+  .capture button:disabled{opacity:.6;cursor:default}
+  .capture-status{min-height:14px;margin-top:10px}
   .ends{border-top:4px solid var(--ink);padding:22px 0 40px;display:flex;justify-content:space-between}
 
   @media (max-width:860px){.ways,.shelf,.foot{grid-template-columns:1fr}.foot{gap:34px}}
@@ -180,13 +182,14 @@
       <p>Born in South Africa, based in Melbourne. I shoot video for a living and I've avoided pointing a camera at myself for about a decade.</p>
       <p>Then AI started daring me to do things — learn piano, build an app, get in shape, post the video. I said yes to all of it and filmed what happened. If there's something you keep meaning to start, start it in the passenger seat.</p>
     </div>
-    <div class="capture">
+    <form class="capture" id="captureForm">
       <span class="sign">Free · no spam · leave whenever</span>
       <h3>Build your own Vault</h3>
       <p>The full guide — every prompt, start to finish. One email, then it's yours.</p>
-      <input type="email" placeholder="you@email.com" aria-label="Email address">
-      <button type="button">Send me the guide</button>
-    </div>
+      <input type="email" name="email" placeholder="you@email.com" aria-label="Email address" required>
+      <button type="submit">Send me the guide</button>
+      <p class="capture-status sign" id="captureStatus" role="status"></p>
+    </form>
   </section>
   <footer class="ends sign">
     <span>© 2026 Vaughn Mittens</span>
@@ -239,6 +242,40 @@
   window.addEventListener('scroll', requestUpdate, {passive:true});
   window.addEventListener('resize', requestUpdate);
   requestUpdate();
+})();
+</script>
+
+<script>
+(function(){
+  var form = document.getElementById('captureForm');
+  var status = document.getElementById('captureStatus');
+  var button = form.querySelector('button');
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var email = form.email.value.trim();
+    status.textContent = '';
+    button.disabled = true;
+    button.textContent = 'Sending…';
+
+    fetch('/subscribe', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email: email})
+    })
+      .then(function(res){ return res.json().then(function(data){ return {ok: res.ok, data: data}; }); })
+      .then(function(result){
+        if(!result.ok){ throw new Error(result.data.error || 'Something went wrong'); }
+        button.textContent = 'Sent — check your inbox!';
+        form.email.value = '';
+        form.email.disabled = true;
+      })
+      .catch(function(){
+        button.disabled = false;
+        button.textContent = 'Send me the guide';
+        status.textContent = "Something went wrong — mind trying again?";
+      });
+  });
 })();
 </script>
 
